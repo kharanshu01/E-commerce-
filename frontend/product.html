@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop — FashionHub</title>
+  <link rel="icon" href="assets/images/logo.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body id="top">
+  <div id="site-header"></div>
+
+  <main class="py-5">
+    <div class="container">
+      <div class="section_title text-center mb-5">
+        <h1 id="page-title">All Products</h1>
+        <p>Find your next favourite piece.</p>
+      </div>
+
+      <div class="row">
+        <!-- Filters -->
+        <aside class="col-lg-3 mb-4">
+          <div class="order-summary" style="position:sticky;top:100px">
+            <h5 class="mb-3"><i class="fas fa-sliders-h mr-2 text-gradient"></i>Filters</h5>
+
+            <div class="mb-4">
+              <input type="text" id="search-input" class="form-control" placeholder="Search products...">
+            </div>
+
+            <div class="mb-4">
+              <label class="font-weight-bold">Category</label>
+              <ul class="list-group" id="category-filter">
+                <li class="list-group-item d-flex justify-content-between align-items-center active-cat" data-cat="all"
+                    style="cursor:pointer">All Categories</li>
+              </ul>
+            </div>
+
+            <div class="mb-4">
+              <label class="font-weight-bold">Sort by</label>
+              <select id="sort-select" class="form-control">
+                <option value="newest">Newest</option>
+                <option value="priceAsc">Price: Low to High</option>
+                <option value="priceDesc">Price: High to Low</option>
+                <option value="rating">Top Rated</option>
+              </select>
+            </div>
+
+            <button class="btn btn-outline-primary btn-block" id="reset-filters"><i class="fas fa-redo mr-1"></i>Reset</button>
+          </div>
+        </aside>
+
+        <!-- Product grid -->
+        <div class="col-lg-9">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted" id="result-count"></span>
+          </div>
+          <div class="row" id="product-grid"></div>
+          <nav class="mt-4"><ul class="pagination justify-content-center" id="pagination"></ul></nav>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/shop.js"></script>
+</body>
+</html>

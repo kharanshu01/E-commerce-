@@ -6,12 +6,28 @@
     Men: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80',
     Accessories: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80',
     Toys: 'https://images.unsplash.com/photo-1516627434852-ccf0d0a9b215?auto=format&fit=crop&w=900&q=80',
+    Mobiles: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=80',
+    Electronics: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=900&q=80',
+    Beauty: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=900&q=80',
+    Appliances: 'https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=900&q=80',
+    Home: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=900&q=80',
+    Food: 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=900&q=80',
+    Sports: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=900&q=80',
+    Furniture: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=900&q=80',
   };
   const blurbs = {
     Women: 'Dresses, heels and more — elegance for every occasion.',
     Men: 'Shirts, hoodies and essentials for the modern man.',
     Accessories: 'Bags, watches and finishing touches.',
     Toys: 'Fun and safe toys the little ones will love.',
+    Mobiles: 'Smartphones, accessories, and everyday connectivity.',
+    Electronics: 'Audio, screens, gadgets, and smart technology.',
+    Beauty: 'Skincare, makeup, and self-care essentials.',
+    Appliances: 'Helpful kitchen and home appliances.',
+    Home: 'Comfort, lighting, decor, and everyday living.',
+    Food: 'Pantry favorites, snacks, and wholesome choices.',
+    Sports: 'Gear and essentials for your active lifestyle.',
+    Furniture: 'Thoughtful pieces for work, rest, and living.',
   };
 
   try {

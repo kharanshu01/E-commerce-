@@ -21,7 +21,7 @@
       </div>
       <div class="search-card reveal">
         <div class="form-group mb-3">
-          <input id="search-page-input" class="form-control form-control-lg" placeholder="Try “dress”, “bag”, or “men”">
+          <input id="search-page-input" class="form-control form-control-lg" placeholder="Try dress, headphones, phone, or beauty" autocomplete="off">
         </div>
         <div class="mb-3">
           <span class="search-chip" onclick="window.location.href='product.html?category=Women'">Women</span>
@@ -29,6 +29,7 @@
           <span class="search-chip" onclick="window.location.href='product.html?sort=newest'">New arrivals</span>
           <span class="search-chip" onclick="window.location.href='product.html?sort=rating'">Top rated</span>
         </div>
+        <div id="search-meta" class="text-muted small mb-3"></div>
         <div id="search-results" class="row"></div>
       </div>
     </div>
@@ -49,20 +50,33 @@
     (async function () {
       const input = document.getElementById('search-page-input');
       const results = document.getElementById('search-results');
+      const meta = document.getElementById('search-meta');
+      let searchTimer;
+      let requestNumber = 0;
       async function runSearch(term = '') {
+        const currentRequest = ++requestNumber;
         results.innerHTML = '<div class="col-12"><div class="spinner"></div></div>';
         try {
           const params = new URLSearchParams();
           if (term) params.set('search', term);
           params.set('limit', 6);
-          const { items } = await window.API.get(`/products?${params}`);
+          const { items, total } = await window.API.get(`/products?${params}`);
+          if (currentRequest !== requestNumber) return;
+          meta.textContent = `${total || 0} result${total === 1 ? '' : 's'} found`;
           window.Render.renderProducts(results, items, 'No products found for this search.');
         } catch (err) {
+          if (currentRequest !== requestNumber) return;
           results.innerHTML = `<div class="col-12"><div class="empty-state"><i class="fas fa-plug"></i><h4>${err.message}</h4></div></div>`;
         }
       }
-      input.addEventListener('input', (e) => runSearch(e.target.value.trim()));
-      runSearch('');
+      input.addEventListener('input', (e) => {
+        clearTimeout(searchTimer);
+        const term = e.target.value.trim();
+        searchTimer = setTimeout(() => runSearch(term), 300);
+      });
+      const initialTerm = window.qs('search') || '';
+      input.value = initialTerm;
+      runSearch(initialTerm);
     })();
   </script>
 </body>

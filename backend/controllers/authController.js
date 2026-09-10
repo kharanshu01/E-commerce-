@@ -79,3 +79,38 @@ exports.saveCart = asyncHandler(async (req, res) => {
   await req.user.save();
   res.json({ message: 'Cart saved.', count: req.user.cart.length });
 });
+
+exports.getWishlist = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id).populate('wishlist');
+  res.json((user.wishlist || []).filter(Boolean));
+});
+
+exports.toggleWishlist = asyncHandler(async (req, res) => {
+  const productId = req.params.productId;
+  const index = req.user.wishlist.findIndex((id) => String(id) === productId);
+  if (index >= 0) req.user.wishlist.splice(index, 1);
+  else req.user.wishlist.push(productId);
+  await req.user.save();
+  res.json({ saved: index < 0, count: req.user.wishlist.length });
+});
+
+exports.getAddresses = asyncHandler(async (req, res) => {
+  res.json(req.user.addresses || []);
+});
+
+exports.saveAddress = asyncHandler(async (req, res) => {
+  const address = req.body;
+  if (!address.address1 || !address.city || !address.postcode || !address.country) {
+    return res.status(400).json({ message: 'Address, city, postcode and country are required.' });
+  }
+  if (address.isDefault) req.user.addresses.forEach((item) => { item.isDefault = false; });
+  req.user.addresses.push(address);
+  await req.user.save();
+  res.status(201).json(req.user.addresses[req.user.addresses.length - 1]);
+});
+
+// GET /api/auth/users (admin)
+exports.getUsers = asyncHandler(async (req, res) => {
+  const users = await User.find().select('-password').sort({ createdAt: -1 });
+  res.json(users);
+});

@@ -6,6 +6,7 @@
 
   try {
     const { product: p, related } = await window.API.get(`/products/${id}`);
+    const reviews = await window.API.get(`/reviews/product/${id}`).catch(() => []);
     document.title = `${p.name} — FashionHub`;
 
     const inStock = p.countInStock > 0;
@@ -33,7 +34,8 @@
               </div>
               <span class="product-badge">${p.rating >= 4.5 ? 'Best seller' : 'Top rated'}</span>
             </div>
-            <div class="price mb-3" style="font-size:2rem">${window.fmt(p.price)}</div>
+            <div class="price mb-1" style="font-size:2rem">${window.fmt(p.price)}</div>
+            ${p.mrp && p.mrp > p.price ? `<div class="text-muted mb-3"><del>${window.fmt(p.mrp)}</del> <span class="text-success font-weight-bold">${Math.round((1 - p.price / p.mrp) * 100)}% off</span></div>` : '<div class="mb-3"></div>'}
             <p class="text-muted">${p.description}</p>
             <div class="mb-3">
               ${inStock
@@ -56,6 +58,7 @@
             <div class="d-flex flex-wrap" style="gap:.75rem">
               <button id="add-btn" class="btn btn-primary btn-lg" ${inStock ? '' : 'disabled'}><i class="fas fa-cart-plus mr-2"></i>Add to Cart</button>
               <button id="buy-btn" class="btn btn-outline-primary btn-lg" ${inStock ? '' : 'disabled'}>Buy Now</button>
+              <button id="wishlist-btn" class="btn btn-light btn-lg" title="Save to wishlist"><i class="far fa-heart"></i></button>
             </div>
           </div>
         </div>
@@ -68,6 +71,31 @@
     qtyEl.oninput = clamp;
     document.getElementById('add-btn').onclick = () => window.Cart.add(p, clamp());
     document.getElementById('buy-btn').onclick = () => { window.Cart.add(p, clamp()); setTimeout(() => (location.href = 'cart.html'), 400); };
+    document.getElementById('wishlist-btn').onclick = async () => {
+      try {
+        const result = await window.API.put(`/auth/wishlist/${p._id}`, {}, true);
+        document.getElementById('wishlist-btn').innerHTML = result.saved ? '<i class="fas fa-heart text-danger"></i>' : '<i class="far fa-heart"></i>';
+        window.toast(result.saved ? 'Added to wishlist.' : 'Removed from wishlist.');
+      } catch (err) {
+        window.toast(err.status === 401 ? 'Please sign in to save products.' : err.message, 'error');
+      }
+    };
+
+    const reviewsEl = document.getElementById('reviews-list');
+    reviewsEl.innerHTML = reviews.length
+      ? reviews.map((review) => `<article class="review-item mb-3"><strong>${review.user?.name || 'Customer'}</strong> <span class="product-ratting ml-2">${window.Render.stars(review.rating)}</span>${review.verifiedPurchase ? '<span class="badge badge-success ml-2">Verified purchase</span>' : ''}<h6 class="mt-2 mb-1">${review.title || 'Customer review'}</h6><p class="mb-0 text-muted">${review.comment}</p></article>`).join('')
+      : '<div class="empty-state"><i class="far fa-comment-dots"></i><h4>No reviews yet</h4><p>Be the first customer to review this product.</p></div>';
+    const reviewForm = document.getElementById('review-form');
+    if (window.Auth.currentUser && window.Auth.currentUser()) reviewForm.style.display = 'block';
+    reviewForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      try {
+        const data = Object.fromEntries(new FormData(reviewForm).entries());
+        await window.API.post(`/reviews/product/${id}`, { ...data, rating: Number(data.rating) }, true);
+        window.toast('Review submitted.');
+        location.reload();
+      } catch (err) { window.toast(err.message, 'error'); }
+    });
 
     if (related && related.length) {
       document.getElementById('related-wrap').style.display = 'block';

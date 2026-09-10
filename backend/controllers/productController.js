@@ -3,12 +3,17 @@ const asyncHandler = require('../middleware/asyncHandler');
 
 // GET /api/products?search=&category=&sort=&page=&limit=
 exports.getProducts = asyncHandler(async (req, res) => {
-  const { search, category, sort } = req.query;
+  const { search, category, brand, sort } = req.query;
   const page = Math.max(1, parseInt(req.query.page) || 1);
   const limit = Math.min(60, parseInt(req.query.limit) || 12);
 
   const filter = {};
   if (category && category !== 'all') filter.category = category;
+  if (brand) filter.brand = brand;
+  if (req.query.minPrice) filter.price = { ...filter.price, $gte: Math.max(0, Number(req.query.minPrice)) };
+  if (req.query.maxPrice) filter.price = { ...filter.price, $lte: Math.max(0, Number(req.query.maxPrice)) };
+  if (req.query.minRating) filter.rating = { $gte: Math.min(5, Math.max(0, Number(req.query.minRating))) };
+  if (req.query.inStock === 'true') filter.countInStock = { $gt: 0 };
   if (req.query.featured === 'true') filter.featured = true;
   if (search) {
     filter.$or = [
@@ -22,6 +27,7 @@ exports.getProducts = asyncHandler(async (req, res) => {
     priceAsc: { price: 1 },
     priceDesc: { price: -1 },
     rating: { rating: -1 },
+    popularity: { numReviews: -1, rating: -1 },
     newest: { createdAt: -1 },
   };
   const sortBy = sortMap[sort] || { createdAt: -1 };

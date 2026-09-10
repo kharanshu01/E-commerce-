@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Product = require('../models/Product');
+const Coupon = require('../models/Coupon');
 const { products } = require('../data/seedData');
 
 /**
@@ -11,6 +12,14 @@ module.exports = async function autoSeed() {
   if (productCount === 0) {
     await Product.insertMany(products);
     console.log(`🌱 Auto-seeded ${products.length} sample products.`);
+  } else {
+    const existing = await Product.find({}, { name: 1 }).lean();
+    const knownNames = new Set(existing.map((product) => product.name));
+    const missing = products.filter((product) => !knownNames.has(product.name));
+    if (missing.length) {
+      await Product.insertMany(missing);
+      console.log(`🌱 Added ${missing.length} new catalog products.`);
+    }
   }
 
   const adminEmail = (process.env.ADMIN_EMAIL || 'admin@fashionhub.com').toLowerCase();
@@ -30,4 +39,10 @@ module.exports = async function autoSeed() {
     await User.create({ name: 'Demo User', email: 'user@fashionhub.com', password: 'user123', role: 'user' });
     console.log('🌱 Auto-created demo user: user@fashionhub.com / user123');
   }
+
+  await Coupon.updateOne(
+    { code: 'WELCOME10' },
+    { $setOnInsert: { code: 'WELCOME10', discountPercent: 10, minOrderValue: 500, expiresAt: new Date('2099-12-31'), active: true } },
+    { upsert: true }
+  );
 };

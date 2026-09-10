@@ -16,6 +16,10 @@
     search: window.qs('search') || '',
     category: window.qs('category') || 'all',
     sort: window.qs('sort') || 'newest',
+    minPrice: window.qs('minPrice') || '',
+    maxPrice: window.qs('maxPrice') || '',
+    minRating: window.qs('minRating') || '',
+    inStock: window.qs('inStock') === 'true',
     page: 1,
   };
 
@@ -24,9 +28,17 @@
   const catList = document.getElementById('category-filter');
   const countEl = document.getElementById('result-count');
   const pager = document.getElementById('pagination');
+  const minPrice = document.getElementById('min-price');
+  const maxPrice = document.getElementById('max-price');
+  const minRating = document.getElementById('min-rating');
+  const inStock = document.getElementById('in-stock');
 
   searchInput.value = state.search;
   sortSelect.value = state.sort;
+  minPrice.value = state.minPrice;
+  maxPrice.value = state.maxPrice;
+  minRating.value = state.minRating;
+  inStock.checked = state.inStock;
 
   async function loadCategories() {
     try {
@@ -69,6 +81,10 @@
     params.set('sort', state.sort);
     params.set('page', state.page);
     params.set('limit', 9);
+    if (state.minPrice) params.set('minPrice', state.minPrice);
+    if (state.maxPrice) params.set('maxPrice', state.maxPrice);
+    if (state.minRating) params.set('minRating', state.minRating);
+    if (state.inStock) params.set('inStock', 'true');
     try {
       const { items, page, pages, total } = await window.API.get(`/products?${params}`);
       const productList = items && items.length ? items : fallbackProducts;
@@ -100,9 +116,13 @@
     searchTimer = setTimeout(() => { state.search = searchInput.value.trim(); state.page = 1; load(); }, 350);
   });
   sortSelect.addEventListener('change', () => { state.sort = sortSelect.value; state.page = 1; load(); });
+  [minPrice, maxPrice, minRating].forEach((control) => control.addEventListener('change', () => {
+    state.minPrice = minPrice.value; state.maxPrice = maxPrice.value; state.minRating = minRating.value; state.page = 1; load();
+  }));
+  inStock.addEventListener('change', () => { state.inStock = inStock.checked; state.page = 1; load(); });
   document.getElementById('reset-filters').addEventListener('click', () => {
-    state.search = ''; state.category = 'all'; state.sort = 'newest'; state.page = 1;
-    searchInput.value = ''; sortSelect.value = 'newest'; highlightCategory(); load();
+    state.search = ''; state.category = 'all'; state.sort = 'newest'; state.minPrice = ''; state.maxPrice = ''; state.minRating = ''; state.inStock = false; state.page = 1;
+    searchInput.value = ''; sortSelect.value = 'newest'; minPrice.value = ''; maxPrice.value = ''; minRating.value = ''; inStock.checked = false; highlightCategory(); load();
   });
 
   loadCategories();

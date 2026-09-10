@@ -45,8 +45,22 @@
                 <option value="priceAsc">Price: Low to High</option>
                 <option value="priceDesc">Price: High to Low</option>
                 <option value="rating">Top Rated</option>
+                <option value="popularity">Most Popular</option>
               </select>
             </div>
+
+            <div class="mb-4">
+              <label class="font-weight-bold">Price range</label>
+              <div class="form-row">
+                <div class="col"><input type="number" id="min-price" class="form-control" min="0" placeholder="Min"></div>
+                <div class="col"><input type="number" id="max-price" class="form-control" min="0" placeholder="Max"></div>
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="font-weight-bold">Minimum rating</label>
+              <select id="min-rating" class="form-control"><option value="">Any rating</option><option value="4">4+ stars</option><option value="3">3+ stars</option></select>
+            </div>
+            <div class="form-check mb-4"><input class="form-check-input" type="checkbox" id="in-stock"><label class="form-check-label" for="in-stock">In stock only</label></div>
 
             <button class="btn btn-outline-primary btn-block" id="reset-filters"><i class="fas fa-redo mr-1"></i>Reset</button>
           </div>

@@ -32,6 +32,7 @@
     <div class="d-flex justify-content-between mb-2"><span>Subtotal</span><span>${window.fmt(subtotal)}</span></div>
     <div class="d-flex justify-content-between mb-2"><span>Tax</span><span>${window.fmt(tax)}</span></div>
     <div class="d-flex justify-content-between mb-2"><span>Shipping</span><span>${shipping === 0 ? '<span class="text-success">FREE</span>' : window.fmt(shipping)}</span></div>
+    <div class="form-group mt-3 mb-3"><label class="small font-weight-bold" for="coupon-code">Coupon code</label><input id="coupon-code" class="form-control" placeholder="Try WELCOME10"></div>
     <hr>
     <div class="d-flex justify-content-between mb-4"><strong>Total</strong><strong class="text-gradient" style="font-size:1.3rem">${window.fmt(total)}</strong></div>
     <button type="submit" form="checkout-form" class="btn btn-primary btn-block btn-lg" id="place-order">
@@ -47,9 +48,15 @@
     btn.innerHTML = '<span class="spinner-border spinner-border-sm mr-2"></span>Processing...';
 
     const shippingData = Object.fromEntries(new FormData(form).entries());
+    const paymentMethod = shippingData.pay === 'on' && document.getElementById('pay2').checked
+      ? 'Card (Simulated)'
+      : 'Cash on Delivery';
+    delete shippingData.pay;
     const payload = {
       items: items.map((i) => ({ product: i.id, qty: i.qty })),
       shipping: shippingData,
+      paymentMethod,
+      couponCode: document.getElementById('coupon-code').value.trim(),
     };
 
     try {
